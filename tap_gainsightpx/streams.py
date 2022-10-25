@@ -1,62 +1,77 @@
 """Stream type classes for tap-gainsightpx."""
 
-from pathlib import Path
-from typing import Any, Dict, Optional, Union, List, Iterable
-
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk import typing as th
 
 from tap_gainsightpx.client import GainsightPXStream
 
-# TODO: Delete this is if not using json files for schema definition
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
-# TODO: - Override `UsersStream` and `GroupsStream` with your own stream definition.
-#       - Copy-paste as many times as needed to create multiple stream types.
 
-
-class UsersStream(GainsightPXStream):
+class EngagementStream(GainsightPXStream):
     """Define custom stream."""
-    name = "users"
-    path = "/users"
+
+    name = "engagement"
+    path = "/engagement"
+    records_jsonpath = "$.engagements[*]"
     primary_keys = ["id"]
     replication_key = None
-    # Optionally, you may also use `schema_filepath` in place of `schema`:
-    # schema_filepath = SCHEMAS_DIR / "users.json"
     schema = th.PropertiesList(
+        th.Property("description", th.StringType),
+        th.Property("envs", th.ArrayType(th.StringType)),
+        th.Property("id", th.StringType),
         th.Property("name", th.StringType),
-        th.Property(
-            "id",
-            th.StringType,
-            description="The user's system ID"
-        ),
-        th.Property(
-            "age",
-            th.IntegerType,
-            description="The user's age in years"
-        ),
-        th.Property(
-            "email",
-            th.StringType,
-            description="The user's email address"
-        ),
-        th.Property("street", th.StringType),
-        th.Property("city", th.StringType),
-        th.Property(
-            "state",
-            th.StringType,
-            description="State name in ISO 3166-2 format"
-        ),
-        th.Property("zip", th.StringType),
+        th.Property("propertyKeys", th.ArrayType(th.StringType)),
+        th.Property("state", th.StringType),
+        th.Property("type", th.StringType),
     ).to_dict()
 
 
-class GroupsStream(GainsightPXStream):
+class SurveyResponse(GainsightPXStream):
     """Define custom stream."""
-    name = "groups"
-    path = "/groups"
-    primary_keys = ["id"]
-    replication_key = "modified"
+
+    name = "survey_response"
+    path = "/survey/responses"
+    records_jsonpath = "$.results[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
     schema = th.PropertiesList(
-        th.Property("name", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("modified", th.DateTimeType),
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("engagementId", th.StringType),
+        th.Property("engagementTrackType", th.StringType),
+        th.Property("contentId", th.StringType),
+        th.Property("contentType", th.StringType),
+        th.Property(
+            "executionDate",
+            th.IntegerType,
+            description="Will be the same on all events related to a single "
+            "engagement view, e.g. separate answers for "
+            "multi-question surveys",
+        ),
+        th.Property(
+            "executionId",
+            th.StringType,
+            description="Will be the same on all events related to a single "
+            "engagement view, e.g. separate answers for "
+            "multi-question surveys",
+        ),
+        th.Property("viewEventId", th.StringType),
+        th.Property("carouselState", th.StringType),
+        th.Property("slideId", th.StringType),
+        th.Property("sequenceNumber", th.IntegerType),
+        th.Property("linkUrl", th.StringType),
+        th.Property("guideState", th.StringType),
+        th.Property("stepId", th.StringType),
+        th.Property("surveyState", th.StringType),
+        th.Property("contactMeAllowed", th.BooleanType),
+        th.Property("score", th.IntegerType),
+        th.Property("comment", th.StringType),
+        th.Property("questionType", th.StringType),
+        th.Property("selectionIds", th.ArrayType(th.StringType)),
+        th.Property("path", th.StringType),
     ).to_dict()

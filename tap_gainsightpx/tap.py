@@ -1,52 +1,61 @@
 """GainsightPX tap class."""
-
+from datetime import date, timedelta
 from typing import List
 
-from singer_sdk import Tap, Stream
-from singer_sdk import typing as th  # JSON schema typing helpers
-# TODO: Import your custom stream types here:
-from tap_gainsightpx.streams import (
-    GainsightPXStream,
-    UsersStream,
-    GroupsStream,
-)
-# TODO: Compile a list of custom stream types here
-#       OR rewrite discover_streams() below with your custom logic.
+from singer_sdk import Stream, Tap
+from singer_sdk import typing as th
+
+from tap_gainsightpx.streams import EngagementStream, SurveyResponse
+
 STREAM_TYPES = [
-    UsersStream,
-    GroupsStream,
+    EngagementStream,
+    SurveyResponse,
 ]
 
 
 class TapGainsightPX(Tap):
     """GainsightPX tap class."""
+
     name = "tap-gainsightpx"
 
-    # TODO: Update this section with the actual config values you expect:
     config_jsonschema = th.PropertiesList(
         th.Property(
-            "auth_token",
+            "api_url",
             th.StringType,
-            required=True,
-            secret=True,  # Flag config as protected.
-            description="The token to authenticate against the API service"
+            required=False,
+            default="https://api.aptrinsic.com/v1",  # type: ignore[arg-type]
+            description="The base url for GainsightPX service. See GainsightPX docs.",
         ),
         th.Property(
-            "project_ids",
-            th.ArrayType(th.StringType),
+            "api_key",
+            th.StringType,
             required=True,
-            description="Project IDs to replicate"
+            secret=True,
+            description="The api key to authenticate against the GainsightPX service",
+        ),
+        th.Property(
+            "page_size",
+            th.IntegerType,
+            required=False,
+            default=500,  # type: ignore[arg-type]
+            description="The number of records to return from the API in single page."
+            "Default and Max is 500.",
         ),
         th.Property(
             "start_date",
             th.DateTimeType,
-            description="The earliest record date to sync"
+            default=(
+                date.today() - timedelta(days=1)  # type: ignore[arg-type]
+            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            description="The earliest record date to sync (inclusive '>='). ISO Format",
         ),
         th.Property(
-            "api_url",
-            th.StringType,
-            default="https://api.mysample.com",
-            description="The url for the API service"
+            "end_date",
+            th.DateTimeType,
+            default=(
+                date.today() - timedelta(microseconds=1)  # type: ignore[arg-type]
+            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            description="The latest record date to sync (inclusive '<='). ISO format.",
         ),
     ).to_dict()
 

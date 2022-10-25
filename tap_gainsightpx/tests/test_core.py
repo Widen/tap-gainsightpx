@@ -1,26 +1,36 @@
 """Tests standard tap features using the built-in SDK tests library."""
 
-import datetime
-
 from singer_sdk.testing import get_standard_tap_tests
 
 from tap_gainsightpx.tap import TapGainsightPX
 
+MOCK_API_URL = "https://api.example.com/v1"
+
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-    # TODO: Initialize minimal tap config
+    "api_url": MOCK_API_URL,
+    "api_key": "api_key",
+    "start_date": "2022-01-01T00:00:00Z",
+    "end_date": "2022-01-01T00:00:00Z",
 }
 
 
+def json_resp():
+    return {"results": [], "scrollId": "abc123", "totalHits": 0}
+
+
 # Run standard built-in tap tests from the SDK:
-def test_standard_tap_tests():
+def test_standard_tap_tests(requests_mock):
     """Run standard tap tests from the SDK."""
-    tests = get_standard_tap_tests(
-        TapGainsightPX,
-        config=SAMPLE_CONFIG
+    requests_mock.get(
+        "https://api.example.com/v1/engagement?pageSize=500&"
+        "filter=date%3B%3E%3D%3B2022-01-01T00%3A00%3A00Z&"
+        "filter=date%3B%3C%3D%3B2022-01-01T00%3A00%3A00Z",
+        json=json_resp(),
     )
+    requests_mock.get(
+        "https://api.example.com/v1/survey/responses?" "pageSize=500&sort=date",
+        json=json_resp(),
+    )
+    tests = get_standard_tap_tests(TapGainsightPX, config=SAMPLE_CONFIG)
     for test in tests:
         test()
-
-
-# TODO: Create additional tests as appropriate for your tap.
