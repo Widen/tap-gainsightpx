@@ -1,14 +1,15 @@
 """Stream type classes for tap-gainsightpx."""
+from typing import Any, Dict, Optional
 
 from singer_sdk import typing as th
 
 from tap_gainsightpx.client import GainsightPXStream
 
 
-class EngagementStream(GainsightPXStream):
-    """Define custom stream."""
+class EngagementsStream(GainsightPXStream):
+    """Engagements Stream."""
 
-    name = "engagement"
+    name = "engagements"
     path = "/engagement"
     records_jsonpath = "$.engagements[*]"
     primary_keys = ["id"]
@@ -23,11 +24,25 @@ class EngagementStream(GainsightPXStream):
         th.Property("type", th.StringType),
     ).to_dict()
 
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["pageNumber"] = next_page_token
+        return params
 
-class SurveyResponse(GainsightPXStream):
-    """Define custom stream."""
 
-    name = "survey_response"
+class SurveyResponsesStream(GainsightPXStream):
+    """Survey Responses Stream."""
+
+    name = "survey_responses"
     path = "/survey/responses"
     records_jsonpath = "$.results[*]"
     primary_keys = ["eventId"]
@@ -76,9 +91,17 @@ class SurveyResponse(GainsightPXStream):
         th.Property("path", th.StringType),
     ).to_dict()
 
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params
+
 
 class AccountsStream(GainsightPXStream):
-    """Define custom stream."""
+    """Accounts Stream."""
 
     name = "accounts"
     path = "/accounts"
@@ -106,3 +129,42 @@ class AccountsStream(GainsightPXStream):
         th.Property("customAttributes", th.ObjectType()),
         th.Property("parentGroupId", th.StringType),
     ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        if next_page_token:
+            params["scrollId"] = next_page_token
+            # params["filter"] = ";".join([
+            #     f"{self.replication_key}>{context[self.replication_key]}",
+            # ])
+        return params
+
+
+class FeaturesStream(GainsightPXStream):
+    """Features Stream."""
+
+    name = "features"
+    path = "/feature"
+    records_jsonpath = "$.features[*]"
+    primary_keys = ["id"]
+    replication_key = None
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("parentFeatureId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("status", th.StringType),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        if params["pageSize"] > 200:
+            params["pageSize"] = 200
+        if next_page_token:
+            params["pageNumber"] = next_page_token
+        return params

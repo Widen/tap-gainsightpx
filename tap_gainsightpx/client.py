@@ -1,4 +1,6 @@
 """REST client handling, including GainsightPXStream base class."""
+from __future__ import annotations
+
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -48,7 +50,7 @@ class GainsightPXStream(RESTStream):
                 next_page_token = scroll_id
             else:
                 next_page_token = None
-        else:  # engagements
+        else:  # engagements features
             if is_last_page:
                 next_page_token = None
             else:
@@ -65,20 +67,13 @@ class GainsightPXStream(RESTStream):
         page_size = self.config.get("page_size")
         if page_size:
             params["pageSize"] = page_size
-
-        if self.name == "engagement":
-            params["filter"] = [
-                f"date;>=;{self.config['start_date']}",
-                f"date;<=;{self.config['end_date']}",
-            ]
-
-        if next_page_token:
-            if self.name == "engagement":
-                params["pageNumber"] = next_page_token
-            else:  # survey_response accounts
-                params["scrollId"] = next_page_token
-
         if self.replication_key:
             params["sort"] = self.replication_key
 
+        return self.add_more_url_params(params, next_page_token)
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
         return params

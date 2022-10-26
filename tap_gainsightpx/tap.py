@@ -5,9 +5,19 @@ from typing import List
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_gainsightpx.streams import AccountsStream, EngagementStream, SurveyResponse
+from tap_gainsightpx.streams import (
+    AccountsStream,
+    EngagementsStream,
+    FeaturesStream,
+    SurveyResponsesStream,
+)
 
-STREAM_TYPES = [EngagementStream, SurveyResponse, AccountsStream]
+STREAM_TYPES = [
+    EngagementsStream,
+    SurveyResponsesStream,
+    AccountsStream,
+    FeaturesStream,
+]
 
 
 class TapGainsightPX(Tap):
