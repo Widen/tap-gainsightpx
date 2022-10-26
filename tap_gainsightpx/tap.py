@@ -9,6 +9,7 @@ from tap_gainsightpx.streams import (
     AccountsStream,
     EngagementsStream,
     FeaturesStream,
+    PageViewEventsStream,
     SurveyResponsesStream,
 )
 
@@ -17,6 +18,7 @@ STREAM_TYPES = [
     SurveyResponsesStream,
     AccountsStream,
     FeaturesStream,
+    PageViewEventsStream,
 ]
 
 
