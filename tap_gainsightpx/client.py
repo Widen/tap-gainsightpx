@@ -1,5 +1,5 @@
 """REST client handling, including GainsightPXStream base class."""
-
+import re
 from pathlib import Path
 from typing import Any, Dict, Optional
 
@@ -39,10 +39,11 @@ class GainsightPXStream(RESTStream):
         total_hits = res.get("totalHits")
         is_last_page = res.get("isLastPage")
         page_number = res.get("pageNumber")
+        records_key = re.findall(r"\$\.(.*)\[\*\]", self.records_jsonpath)[0]
 
         if scroll_id is not None:
-            # survey_responses
-            self.current_record_count += len(res["results"])
+            # survey_responses, accounts
+            self.current_record_count += len(res[records_key])
             if total_hits > self.current_record_count:
                 next_page_token = scroll_id
             else:
@@ -74,7 +75,7 @@ class GainsightPXStream(RESTStream):
         if next_page_token:
             if self.name == "engagement":
                 params["pageNumber"] = next_page_token
-            elif self.name == "survey_response":
+            else:  # survey_response accounts
                 params["scrollId"] = next_page_token
 
         if self.replication_key:

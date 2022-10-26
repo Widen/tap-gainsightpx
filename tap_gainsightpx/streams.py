@@ -75,3 +75,34 @@ class SurveyResponse(GainsightPXStream):
         th.Property("selectionIds", th.ArrayType(th.StringType)),
         th.Property("path", th.StringType),
     ).to_dict()
+
+
+class AccountsStream(GainsightPXStream):
+    """Define custom stream."""
+
+    name = "accounts"
+    path = "/accounts"
+    records_jsonpath = "$.accounts[*]"
+    primary_keys = ["id"]
+    replication_key = "lastModifiedDate"
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("trackedSubscriptionId", th.StringType),
+        th.Property("sfdcId", th.StringType),
+        th.Property("lastSeenDate", th.IntegerType),
+        th.Property("dunsNumber", th.StringType),
+        th.Property("industry", th.StringType),
+        th.Property("numberOfEmployees", th.IntegerType),
+        th.Property("sicCode", th.StringType),
+        th.Property("website", th.StringType),
+        th.Property("naicsCode", th.StringType),
+        th.Property("plan", th.StringType),
+        th.Property("location", th.ObjectType()),
+        th.Property("numberOfUsers", th.IntegerType),
+        th.Property("propertyKeys", th.ArrayType(th.StringType)),
+        th.Property("createDate", th.IntegerType),
+        th.Property("lastModifiedDate", th.IntegerType),
+        th.Property("customAttributes", th.ObjectType()),
+        th.Property("parentGroupId", th.StringType),
+    ).to_dict()

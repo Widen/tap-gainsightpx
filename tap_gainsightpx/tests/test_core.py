@@ -15,7 +15,13 @@ SAMPLE_CONFIG = {
 
 
 def json_resp():
-    return {"results": [], "scrollId": "abc123", "totalHits": 0}
+    return {
+        "results": [],
+        "scrollId": "abc123",
+        "totalHits": 0,
+        "accounts": [],
+        "engagements": [],
+    }
 
 
 # Run standard built-in tap tests from the SDK:
@@ -28,7 +34,11 @@ def test_standard_tap_tests(requests_mock):
         json=json_resp(),
     )
     requests_mock.get(
-        "https://api.example.com/v1/survey/responses?" "pageSize=500&sort=date",
+        "https://api.example.com/v1/survey/responses?pageSize=500&sort=date",
+        json=json_resp(),
+    )
+    requests_mock.get(
+        "https://api.example.com/v1/accounts?pageSize=500&sort=lastModifiedDate",
         json=json_resp(),
     )
     tests = get_standard_tap_tests(TapGainsightPX, config=SAMPLE_CONFIG)

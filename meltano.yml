@@ -27,8 +27,7 @@ plugins:
     config:
       api_url: https://api.aptrinsic.com/v1
     select:
-    - engagement.*
-    - survey_response.*
+    - "*.*"
   loaders:
   - name: target-jsonl
     variant: andyh1203
