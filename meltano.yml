@@ -28,7 +28,7 @@ plugins:
       api_url: https://api.aptrinsic.com/v1
     select:
 #    - "*.*"
-    - custom_events.*
+    - email_events.*
   loaders:
   - name: target-jsonl
     variant: andyh1203

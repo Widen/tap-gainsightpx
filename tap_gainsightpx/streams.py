@@ -295,3 +295,48 @@ class CustomEventsStream(GainsightPXStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+
+class EmailEventsStream(GainsightPXStream):
+    """Email Events Stream."""
+
+    name = "email_events"
+    path = "/events/email"
+    records_jsonpath = "$.results[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("engagementId", th.StringType),
+        th.Property("email", th.StringType),
+        th.Property("emailTrackType", th.StringType),
+        th.Property("status", th.StringType),
+        th.Property("reason", th.StringType),
+        th.Property("bounceType", th.StringType),
+        th.Property("mtaResponse", th.StringType),
+        th.Property("attempt", th.StringType),
+        th.Property("linkIndex", th.IntegerType),
+        th.Property("linkType", th.StringType),
+        th.Property("linkUrl", th.StringType),
+        th.Property("inferredLocation", th.ObjectType()),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params
