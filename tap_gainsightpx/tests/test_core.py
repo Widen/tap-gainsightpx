@@ -98,6 +98,12 @@ def test_standard_tap_tests(requests_mock):
         "date%3C%3D2022-01-01T00%3A00%3A00Z",
         json=json_resp(),
     )
+    requests_mock.get(
+        "https://api.example.com/v1/events/segment_match?pageSize=500&sort=date&filter="
+        "date%3E%3D2022-01-01T00%3A00%3A00Z%3B"
+        "date%3C%3D2022-01-01T00%3A00%3A00Z",
+        json=json_resp(),
+    )
     tests = get_standard_tap_tests(TapGainsightPX, config=SAMPLE_CONFIG)
     for test in tests:
         test()

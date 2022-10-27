@@ -76,4 +76,12 @@ class GainsightPXStream(RESTStream):
         self, params: dict, next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["scrollId"] = next_page_token
         return params

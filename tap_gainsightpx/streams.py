@@ -206,20 +206,6 @@ class PageViewEventsStream(GainsightPXStream):
         th.Property("pageTitle", th.StringType),
     ).to_dict()
 
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
-
 
 class FeatureMatchEventsStream(GainsightPXStream):
     """Feature Match Events Stream."""
@@ -241,20 +227,6 @@ class FeatureMatchEventsStream(GainsightPXStream):
         th.Property("globalContext", th.ObjectType()),
         th.Property("featureId", th.StringType),
     ).to_dict()
-
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
 
 
 class CustomEventsStream(GainsightPXStream):
@@ -281,20 +253,6 @@ class CustomEventsStream(GainsightPXStream):
         th.Property("referrer", th.StringType),
         th.Property("remoteHost", th.StringType),
     ).to_dict()
-
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
 
 
 class EmailEventsStream(GainsightPXStream):
@@ -326,20 +284,6 @@ class EmailEventsStream(GainsightPXStream):
         th.Property("linkUrl", th.StringType),
         th.Property("inferredLocation", th.ObjectType()),
     ).to_dict()
-
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
 
 
 class EngagementViewEventsStream(GainsightPXStream):
@@ -382,20 +326,6 @@ class EngagementViewEventsStream(GainsightPXStream):
         th.Property("path", th.StringType),
     ).to_dict()
 
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
-
 
 class FormSubmitEventsStream(GainsightPXStream):
     """Form Submit Events Stream."""
@@ -429,20 +359,6 @@ class FormSubmitEventsStream(GainsightPXStream):
         th.Property("formData", th.ObjectType()),
     ).to_dict()
 
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
-
 
 class IdentifyEventsStream(GainsightPXStream):
     """Identify Events Stream."""
@@ -464,20 +380,6 @@ class IdentifyEventsStream(GainsightPXStream):
         th.Property("globalContext", th.ObjectType()),
         th.Property("email", th.StringType),
     ).to_dict()
-
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
 
 
 class LeadEventsStream(GainsightPXStream):
@@ -501,16 +403,24 @@ class LeadEventsStream(GainsightPXStream):
         th.Property("email", th.StringType),
     ).to_dict()
 
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
-    ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        params["filter"] = ";".join(
-            [
-                f"date>={self.config['start_date']}",
-                f"date<={self.config['end_date']}",
-            ]
-        )
-        if next_page_token:
-            params["scrollId"] = next_page_token
-        return params
+
+class SegmentMatchEventsStream(GainsightPXStream):
+    """Segment Match Events Stream."""
+
+    name = "segment_match_events"
+    path = "/events/segment_match"
+    records_jsonpath = "$.featureMatchEvents[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("segmentId", th.StringType),
+    ).to_dict()
