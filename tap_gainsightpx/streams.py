@@ -424,3 +424,26 @@ class SegmentMatchEventsStream(GainsightPXStream):
         th.Property("globalContext", th.ObjectType()),
         th.Property("segmentId", th.StringType),
     ).to_dict()
+
+
+class SessionEventsStream(GainsightPXStream):
+    """Session Events Stream."""
+
+    name = "session_events"
+    path = "/events/session"
+    records_jsonpath = "$.sessionInitializedEvents[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("remoteHost", th.StringType),
+        th.Property("inferredLocation", th.ObjectType()),
+    ).to_dict()

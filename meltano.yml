@@ -27,8 +27,8 @@ plugins:
     config:
       api_url: https://api.aptrinsic.com/v1
     select:
-    - "*.*"
-#    - segment_match_events.*
+#    - "*.*"
+    - session_events.*
   loaders:
   - name: target-jsonl
     variant: andyh1203
