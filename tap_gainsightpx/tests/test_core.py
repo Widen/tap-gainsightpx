@@ -23,6 +23,7 @@ def json_resp():
         "engagements": [],
         "features": [],
         "featureMatchEvents": [],
+        "customEvents": [],
     }
 
 
@@ -55,6 +56,12 @@ def test_standard_tap_tests(requests_mock):
     )
     requests_mock.get(
         "https://api.example.com/v1/events/feature_match?pageSize=500&sort=date&filter="
+        "date%3E%3D2022-01-01T00%3A00%3A00Z%3B"
+        "date%3C%3D2022-01-01T00%3A00%3A00Z",
+        json=json_resp(),
+    )
+    requests_mock.get(
+        "https://api.example.com/v1/events/custom?pageSize=500&sort=date&filter="
         "date%3E%3D2022-01-01T00%3A00%3A00Z%3B"
         "date%3C%3D2022-01-01T00%3A00%3A00Z",
         json=json_resp(),

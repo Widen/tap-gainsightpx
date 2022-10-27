@@ -7,6 +7,7 @@ from singer_sdk import typing as th
 
 from tap_gainsightpx.streams import (
     AccountsStream,
+    CustomEventsStream,
     EngagementsStream,
     FeatureMatchEventsStream,
     FeaturesStream,
@@ -21,6 +22,7 @@ STREAM_TYPES = [
     FeaturesStream,
     PageViewEventsStream,
     FeatureMatchEventsStream,
+    CustomEventsStream,
 ]
 
 
