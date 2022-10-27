@@ -442,3 +442,39 @@ class FormSubmitEventsStream(GainsightPXStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+
+class IdentifyEventsStream(GainsightPXStream):
+    """Identify Events Stream."""
+
+    name = "identify_events"
+    path = "/events/identify"
+    records_jsonpath = "$.identifyEvents[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("email", th.StringType),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params
