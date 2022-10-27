@@ -174,6 +174,30 @@ class FeaturesStream(GainsightPXStream):
         return params
 
 
+class SegmentsStream(GainsightPXStream):
+    """Segments Stream."""
+
+    name = "segments"
+    path = "/segment"
+    records_jsonpath = "$.segments[*]"
+    primary_keys = ["id"]
+    replication_key = None
+    schema = th.PropertiesList(
+        th.Property("id", th.StringType),
+        th.Property("name", th.StringType),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        if params["pageSize"] > 200:
+            params["pageSize"] = 200
+        if next_page_token:
+            params["pageNumber"] = next_page_token
+        return params
+
+
 class PageViewEventsStream(GainsightPXStream):
     """Page View Events Stream."""
 
