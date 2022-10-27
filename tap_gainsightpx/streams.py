@@ -395,3 +395,50 @@ class EngagementViewEventsStream(GainsightPXStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+
+class FormSubmitEventsStream(GainsightPXStream):
+    """Engagement View Events Stream."""
+
+    name = "form_submit_events"
+    path = "/events/formSubmit"
+    records_jsonpath = "$.results[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("host", th.StringType),
+        th.Property("path", th.StringType),
+        th.Property("queryString", th.StringType),
+        th.Property("hash", th.StringType),
+        th.Property("queryParams", th.ObjectType()),
+        th.Property("remoteHost", th.StringType),
+        th.Property("referrer", th.StringType),
+        th.Property("screenHeight", th.IntegerType),
+        th.Property("screenWidth", th.IntegerType),
+        th.Property("languages", th.ArrayType(th.StringType)),
+        th.Property("pageTitle", th.StringType),
+        th.Property("formData", th.ObjectType()),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params

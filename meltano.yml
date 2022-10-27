@@ -28,7 +28,7 @@ plugins:
       api_url: https://api.aptrinsic.com/v1
     select:
 #    - "*.*"
-    - engagement_view_events.*
+    - form_submit_events.*
   loaders:
   - name: target-jsonl
     variant: andyh1203
