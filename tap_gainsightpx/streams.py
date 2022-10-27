@@ -471,3 +471,50 @@ class SessionEventsStream(GainsightPXStream):
         th.Property("remoteHost", th.StringType),
         th.Property("inferredLocation", th.ObjectType()),
     ).to_dict()
+
+
+class UsersStream(GainsightPXStream):
+    """Users Stream."""
+
+    name = "users"
+    path = "/users"
+    records_jsonpath = "$.users[*]"
+    primary_keys = ["aptrinsicId"]
+    replication_key = None
+    schema = th.PropertiesList(
+        th.Property("aptrinsicId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("type", th.StringType),
+        th.Property("gender", th.StringType),
+        th.Property("email", th.StringType),
+        th.Property("firstName", th.StringType),
+        th.Property("lastName", th.StringType),
+        th.Property("lastSeenDate", th.IntegerType),
+        th.Property("signUpDate", th.IntegerType),
+        th.Property("firstVisitDate", th.IntegerType),
+        th.Property("title", th.StringType),
+        th.Property("phone", th.StringType),
+        th.Property("score", th.IntegerType),
+        th.Property("role", th.StringType),
+        th.Property("subscriptionId", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("numberOfVisits", th.IntegerType),
+        th.Property("location", th.ObjectType()),
+        th.Property("propertyKeys", th.ArrayType(th.StringType)),
+        th.Property("createDate", th.IntegerType),
+        th.Property("lastModifiedDate", th.IntegerType),
+        th.Property("customAttributes", th.ObjectType()),
+        th.Property("globalUnsubscribe", th.BooleanType),
+        th.Property("sfdcContactId", th.StringType),
+        th.Property("lastVisitedUserAgentData", th.ArrayType(th.ObjectType())),
+        th.Property("id", th.StringType),
+        th.Property("lastInferredLocation", th.ObjectType()),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params

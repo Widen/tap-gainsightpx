@@ -27,6 +27,7 @@ def json_resp():
         "identifyEvents": [],
         "sessionInitializedEvents": [],
         "segments": [],
+        "users": [],
     }
 
 
@@ -114,6 +115,10 @@ def test_standard_tap_tests(requests_mock):
     )
     requests_mock.get(
         "https://api.example.com/v1/segment?pageSize=200",
+        json=json_resp(),
+    )
+    requests_mock.get(
+        "https://api.example.com/v1/users?pageSize=500",
         json=json_resp(),
     )
     tests = get_standard_tap_tests(TapGainsightPX, config=SAMPLE_CONFIG)
