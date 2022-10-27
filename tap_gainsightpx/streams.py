@@ -340,3 +340,58 @@ class EmailEventsStream(GainsightPXStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+
+class EngagementViewEventsStream(GainsightPXStream):
+    """Engagement View Events Stream."""
+
+    name = "engagement_view_events"
+    path = "/events/engagementView"
+    records_jsonpath = "$.results[*]"
+    primary_keys = ["eventId"]
+    replication_key = "date"
+    schema = th.PropertiesList(
+        th.Property("eventId", th.StringType),
+        th.Property("identifyId", th.StringType),
+        th.Property("propertyKey", th.StringType),
+        th.Property("date", th.IntegerType),
+        th.Property("eventType", th.StringType),
+        th.Property("sessionId", th.StringType),
+        th.Property("userType", th.StringType),
+        th.Property("accountId", th.StringType),
+        th.Property("globalContext", th.ObjectType()),
+        th.Property("engagementId", th.StringType),
+        th.Property("engagementTrackType", th.StringType),
+        th.Property("contentId", th.StringType),
+        th.Property("contentType", th.StringType),
+        th.Property("executionDate", th.IntegerType),
+        th.Property("executionId", th.StringType),
+        th.Property("viewEventId", th.StringType),
+        th.Property("carouselState", th.StringType),
+        th.Property("slideId", th.StringType),
+        th.Property("sequenceNumber", th.IntegerType),
+        th.Property("linkUrl", th.StringType),
+        th.Property("guideState", th.StringType),
+        th.Property("stepId", th.StringType),
+        th.Property("surveyState", th.StringType),
+        th.Property("contactMeAllowed", th.BooleanType),
+        th.Property("score", th.IntegerType),
+        th.Property("comment", th.StringType),
+        th.Property("questionType", th.StringType),
+        th.Property("selectionIds", th.ArrayType(th.StringType)),
+        th.Property("path", th.StringType),
+    ).to_dict()
+
+    def add_more_url_params(
+        self, params: dict, next_page_token: Optional[Any]
+    ) -> Dict[str, Any]:
+        """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
+        if next_page_token:
+            params["scrollId"] = next_page_token
+        return params
