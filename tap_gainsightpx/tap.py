@@ -15,6 +15,7 @@ from tap_gainsightpx.streams import (
     FeaturesStream,
     FormSubmitEventsStream,
     IdentifyEventsStream,
+    LeadEventsStream,
     PageViewEventsStream,
     SurveyResponsesStream,
 )
@@ -31,6 +32,7 @@ STREAM_TYPES = [
     EngagementViewEventsStream,
     FormSubmitEventsStream,
     IdentifyEventsStream,
+    LeadEventsStream,
 ]
 
 
