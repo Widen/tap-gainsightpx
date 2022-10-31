@@ -44,13 +44,12 @@ class GainsightPXStream(RESTStream):
         records_key = re.findall(r"\$\.(.*)\[\*\]", self.records_jsonpath)[0]
 
         if scroll_id is not None:
-            # survey_responses, accounts
             self.current_record_count += len(res[records_key])
             if total_hits > self.current_record_count:
                 next_page_token = scroll_id
             else:
                 next_page_token = None
-        else:  # engagements features
+        else:
             if is_last_page:
                 next_page_token = None
             else:

@@ -70,7 +70,7 @@ class TapGainsightPX(Tap):
             required=False,
             default=500,  # type: ignore[arg-type]
             description="The number of records to return from the API in single page."
-            "Default and Max is 500.",
+            "Default and max varies based on the endpoint.",
         ),
         th.Property(
             "start_date",

@@ -1,7 +1,15 @@
 """Stream type classes for tap-gainsightpx."""
+from __future__ import annotations
+
 from typing import Any, Dict, Optional
 
+from requests import Response
 from singer_sdk import typing as th
+from singer_sdk.pagination import (
+    BaseAPIPaginator,
+    JSONPathPaginator,
+    SinglePagePaginator,
+)
 
 from tap_gainsightpx.client import GainsightPXStream
 
@@ -479,6 +487,7 @@ class UsersStream(GainsightPXStream):
     name = "users"
     path = "/users"
     records_jsonpath = "$.users[*]"
+    next_page_token_jsonpath = "$.scrollId"
     primary_keys = ["aptrinsicId"]
     replication_key = None
     schema = th.PropertiesList(
@@ -518,3 +527,46 @@ class UsersStream(GainsightPXStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+    def get_new_paginator(self) -> BaseAPIPaginator:
+        """Get a fresh paginator for this API endpoint."""
+        if self.next_page_token_jsonpath:
+            return GainsightPaginator(self.next_page_token_jsonpath)
+        else:
+            return SinglePagePaginator(0)
+
+
+class GainsightPaginator(JSONPathPaginator):
+    """An API paginator object for Gainsight."""
+
+    current_record_count: int = 0
+
+    def has_more(self, response: Response) -> bool:
+        """Override this method to check if the endpoint has any pages left."""
+        res = response.json()
+        scroll_id = res.get("scrollId")
+        total_hits = res.get("totalHits")
+
+        has_more = False
+        if scroll_id is not None:
+            self.current_record_count += len(res["users"])
+            if total_hits > self.current_record_count:
+                has_more = True
+
+        return has_more
+
+    def advance(self, response: Response) -> None:
+        """Get a new page value and advance the current one."""
+        self._page_count += 1
+
+        if not self.has_more(response):
+            self._finished = True
+            return
+
+        new_value = self.get_next(response)
+
+        # Stop if new value None, empty string, 0, etc.
+        if not new_value:
+            self._finished = True
+        else:
+            self._value = new_value
