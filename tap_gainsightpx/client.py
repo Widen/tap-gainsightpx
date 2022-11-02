@@ -1,15 +1,16 @@
 """REST client handling, including GainsightPXStream base class."""
 from __future__ import annotations
 
-import re
-from pathlib import Path
 from typing import Any, Dict, Optional
 
-import requests
 from singer_sdk.authenticators import APIKeyAuthenticator
+from singer_sdk.pagination import BaseAPIPaginator
 from singer_sdk.streams import RESTStream
 
-SCHEMAS_DIR = Path(__file__).parent / Path("./schemas")
+from tap_gainsightpx.paginators import (
+    GainsightBasePageNumberPaginator,
+    GainsightJSONPathPaginator,
+)
 
 
 class GainsightPXStream(RESTStream):
@@ -31,31 +32,6 @@ class GainsightPXStream(RESTStream):
             value=self.config["api_key"],
             location="header",
         )
-
-    def get_next_page_token(
-        self, response: requests.Response, previous_token: Optional[Any]
-    ) -> Optional[Any]:
-        """Return a token for identifying next page or None if no more pages."""
-        res = response.json()
-        scroll_id = res.get("scrollId")
-        total_hits = res.get("totalHits")
-        is_last_page = res.get("isLastPage")
-        page_number = res.get("pageNumber")
-        records_key = re.findall(r"\$\.(.*)\[\*\]", self.records_jsonpath)[0]
-
-        if scroll_id is not None:
-            self.current_record_count += len(res[records_key])
-            if total_hits > self.current_record_count:
-                next_page_token = scroll_id
-            else:
-                next_page_token = None
-        else:
-            if is_last_page:
-                next_page_token = None
-            else:
-                next_page_token = page_number + 1
-
-        return next_page_token
 
     def get_url_params(
         self, context: Optional[dict], next_page_token: Optional[Any]
@@ -84,3 +60,12 @@ class GainsightPXStream(RESTStream):
         if next_page_token:
             params["scrollId"] = next_page_token
         return params
+
+    def get_new_paginator(self) -> BaseAPIPaginator:
+        """Get a fresh paginator for this API endpoint."""
+        if self.next_page_token_jsonpath:
+            return GainsightJSONPathPaginator(
+                self.next_page_token_jsonpath, self.records_jsonpath
+            )
+        else:
+            return GainsightBasePageNumberPaginator(0)

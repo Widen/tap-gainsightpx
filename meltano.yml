@@ -27,7 +27,22 @@ plugins:
     config:
       api_url: https://api.aptrinsic.com/v1
     select:
-    - "*.*"
+    - accounts.*
+    - custom_events.*
+    - email_events.*
+    - engagement_view_events.*
+    - engagements.*
+    - feature_match_events.*
+    - features.*
+    - form_submit_events.*
+    - identify_events.*
+    - lead_events.*
+    - page_view_events.*
+    - segment_match_events.*
+    - segments.*
+    - session_events.*
+    - survey_responses.*
+    - users.*
   loaders:
   - name: target-jsonl
     variant: andyh1203

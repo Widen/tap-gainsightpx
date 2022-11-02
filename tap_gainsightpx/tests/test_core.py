@@ -17,7 +17,8 @@ SAMPLE_CONFIG = {
 def json_resp():
     return {
         "results": [],
-        "scrollId": "abc123",
+        # "scrollId": None,
+        "isLastPage": True,
         "totalHits": 0,
         "accounts": [],
         "engagements": [],
