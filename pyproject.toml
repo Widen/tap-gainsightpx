@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "tap-gainsightpx"
-version = "1.0.4"
+version = "1.0.5"
 description = "`tap-gainsightpx` is a Singer tap for GainsightPX, built with the Meltano Singer SDK."
 authors = ["Josh Lloyd"]
 keywords = [
