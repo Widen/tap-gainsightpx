@@ -31,13 +31,14 @@ class GainsightJSONPathPaginator(JSONPathPaginator):
         total_hits = res.get("totalHits")
         records_key = re.findall(r"\$\.(.*)\[\*\]", self._records_jsonpath)[0]
 
-        has_more = False
-        if scroll_id is not None:
-            self.current_record_count += len(res[records_key])
-            if total_hits > self.current_record_count:
-                has_more = True
+        response_record_count = len(res[records_key])
+        self.current_record_count += response_record_count
+        if response_record_count == 0 or scroll_id is None:
+            return False
+        elif total_hits > self.current_record_count:
+            return True
 
-        return has_more
+        return False
 
     def advance(self, response: Response) -> None:
         """Get a new page value and advance the current one."""
