@@ -18,40 +18,38 @@ class AccountsStream(GainsightPXStream):
     primary_keys = ["id"]
     replication_key = "lastModifiedDate"
     schema = th.PropertiesList(
-        th.Property("id", th.StringType),
-        th.Property("name", th.StringType),
-        th.Property("trackedSubscriptionId", th.StringType),
-        th.Property("sfdcId", th.StringType),
-        th.Property("lastSeenDate", th.IntegerType),
-        th.Property("dunsNumber", th.StringType),
-        th.Property("industry", th.StringType),
-        th.Property("numberOfEmployees", th.IntegerType),
-        th.Property("sicCode", th.StringType),
-        th.Property("website", th.StringType),
-        th.Property("naicsCode", th.StringType),
-        th.Property("plan", th.StringType),
-        th.Property("location", th.ObjectType()),
-        th.Property("numberOfUsers", th.IntegerType),
-        th.Property("propertyKeys", th.ArrayType(th.StringType)),
         th.Property("createDate", th.IntegerType),
-        th.Property("lastModifiedDate", th.IntegerType),
         th.Property("customAttributes", th.ObjectType()),
+        th.Property("dunsNumber", th.StringType),
+        th.Property("id", th.StringType),
+        th.Property("industry", th.StringType),
+        th.Property("lastModifiedDate", th.IntegerType),
+        th.Property("lastSeenDate", th.IntegerType),
+        th.Property("location", th.ObjectType()),
+        th.Property("naicsCode", th.StringType),
+        th.Property("name", th.StringType),
+        th.Property("numberOfEmployees", th.IntegerType),
+        th.Property("numberOfUsers", th.IntegerType),
         th.Property("parentGroupId", th.StringType),
+        th.Property("plan", th.StringType),
+        th.Property("propertyKeys", th.ArrayType(th.StringType)),
+        th.Property("sfdcId", th.StringType),
+        th.Property("sicCode", th.StringType),
+        th.Property("trackedSubscriptionId", th.StringType),
+        th.Property("website", th.StringType),
     ).to_dict()
 
-    def add_more_url_params(
-        self, params: dict, next_page_token: Optional[Any]
+    def get_url_params(
+        self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
-        """Add more params specific to the stream."""
-        if next_page_token:
-            params["scrollId"] = next_page_token
+        """Return a dictionary of values to be used in URL parameterization."""
+        params: dict = {"pageSize": 100}
 
-            # todo: enable replication key method
-            # bookmarks = self.stream_state['bookmarks']
-            # replication_key_value = bookmarks[self.name]['replication_key_value']
-            # params["filter"] = ";".join([
-            #     f"{self.replication_key}>{replication_key_value}",
-            # ])
+        if self.replication_key:
+            params["sort"] = self.replication_key
+        if next_page_token:
+            params["scrollID"] = next_page_token
+
         return params
 
 
