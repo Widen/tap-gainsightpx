@@ -48,7 +48,7 @@ class AccountsStream(GainsightPXStream):
         if self.replication_key:
             params["sort"] = self.replication_key
         if next_page_token:
-            params["scrollID"] = next_page_token
+            params["scrollId"] = next_page_token
 
         return params
 
