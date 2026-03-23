@@ -1,7 +1,8 @@
 """REST client handling, including GainsightPXStream base class."""
+
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
 from singer_sdk.authenticators import APIKeyAuthenticator
 from singer_sdk.pagination import BaseAPIPaginator
@@ -34,7 +35,7 @@ class GainsightPXStream(RESTStream):
         )
 
     def get_url_params(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+        self, context: Optional[Mapping[str, Any]], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {}
