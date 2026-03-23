@@ -20,7 +20,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.8,<3.13"
 requests = "^2.25.1"
-singer-sdk = "^0.13.0"
+singer-sdk = ">=0.39.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
