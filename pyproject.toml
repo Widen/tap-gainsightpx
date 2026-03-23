@@ -22,7 +22,7 @@ python = ">=3.8,<3.13"
 requests = "^2.25.1"
 singer-sdk = ">=0.39.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 pytest = "^6.2.5"
 tox = "^3.24.4"
 flake8 = "^3.9.2"
