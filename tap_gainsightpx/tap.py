@@ -74,7 +74,7 @@ class TapGainsightPX(Tap):
         ),
         th.Property(
             "start_date",
-            th.DateTimeType,
+            th.StringType,
             default=(
                 date.today() - timedelta(days=1)  # type: ignore[arg-type]
             ).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -82,7 +82,7 @@ class TapGainsightPX(Tap):
         ),
         th.Property(
             "end_date",
-            th.DateTimeType,
+            th.StringType,
             default=(
                 date.today() - timedelta(microseconds=1)  # type: ignore[arg-type]
             ).strftime("%Y-%m-%dT%H:%M:%SZ"),
