@@ -71,7 +71,7 @@ class TapGainsightPX(Tap):
             required=False,
             default=500,  # type: ignore[arg-type]
             description="The number of records to return from the API in single page."
-                        "Default and max varies based on the endpoint.",
+            "Default and max varies based on the endpoint.",
         ),
         th.Property(
             "start_date",
@@ -93,9 +93,7 @@ class TapGainsightPX(Tap):
             th.StringType,
             default=str(
                 int(
-                    datetime.combine(
-                        date.today(), datetime.min.time()
-                    )
+                    datetime.combine(date.today(), datetime.min.time())
                     .replace(tzinfo=timezone.utc)
                     .timestamp()
                     * 1000
