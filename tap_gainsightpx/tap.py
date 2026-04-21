@@ -1,6 +1,6 @@
 """GainsightPX tap class."""
 
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 from typing import List
 
 from singer_sdk import Stream, Tap
@@ -71,23 +71,38 @@ class TapGainsightPX(Tap):
             required=False,
             default=500,  # type: ignore[arg-type]
             description="The number of records to return from the API in single page."
-            "Default and max varies based on the endpoint.",
+                        "Default and max varies based on the endpoint.",
         ),
         th.Property(
             "start_date",
             th.StringType,
-            default=(
-                date.today() - timedelta(days=1)  # type: ignore[arg-type]
-            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            description="The earliest record date to sync (inclusive '>='). ISO Format",
+            default=str(
+                int(
+                    datetime.combine(
+                        date.today() - timedelta(days=1), datetime.min.time()
+                    )
+                    .replace(tzinfo=timezone.utc)
+                    .timestamp()
+                    * 1000
+                )
+            ),
+            description="The earliest record date to sync as epoch milliseconds (inclusive '>=').",
         ),
         th.Property(
             "end_date",
             th.StringType,
-            default=(
-                date.today() - timedelta(microseconds=1)  # type: ignore[arg-type]
-            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            description="The latest record date to sync (inclusive '<='). ISO format.",
+            default=str(
+                int(
+                    datetime.combine(
+                        date.today(), datetime.min.time()
+                    )
+                    .replace(tzinfo=timezone.utc)
+                    .timestamp()
+                    * 1000
+                )
+                - 1
+            ),
+            description="The latest record date to sync as epoch milliseconds (inclusive '<=').",
         ),
     ).to_dict()
 
