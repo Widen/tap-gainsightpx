@@ -86,7 +86,8 @@ class TapGainsightPX(Tap):
                     * 1000
                 )
             ),
-            description="The earliest record date to sync as epoch milliseconds (inclusive '>=').",
+            description="The earliest record date to sync as epoch milliseconds"
+            " (inclusive '>=').",
         ),
         th.Property(
             "end_date",
@@ -100,7 +101,8 @@ class TapGainsightPX(Tap):
                 )
                 - 1
             ),
-            description="The latest record date to sync as epoch milliseconds (inclusive '<=').",
+            description="The latest record date to sync as epoch milliseconds"
+            " (inclusive '<=').",
         ),
     ).to_dict()
 
