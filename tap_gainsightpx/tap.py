@@ -1,5 +1,6 @@
 """GainsightPX tap class."""
-from datetime import date, timedelta
+
+from datetime import date, datetime, timedelta, timezone
 from typing import List
 
 from singer_sdk import Stream, Tap
@@ -74,19 +75,34 @@ class TapGainsightPX(Tap):
         ),
         th.Property(
             "start_date",
-            th.DateTimeType,
-            default=(
-                date.today() - timedelta(days=1)  # type: ignore[arg-type]
-            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            description="The earliest record date to sync (inclusive '>='). ISO Format",
+            th.StringType,
+            default=str(
+                int(
+                    datetime.combine(
+                        date.today() - timedelta(days=1), datetime.min.time()
+                    )
+                    .replace(tzinfo=timezone.utc)
+                    .timestamp()
+                    * 1000
+                )
+            ),
+            description="The earliest record date to sync as epoch milliseconds"
+            " (inclusive '>=').",
         ),
         th.Property(
             "end_date",
-            th.DateTimeType,
-            default=(
-                date.today() - timedelta(microseconds=1)  # type: ignore[arg-type]
-            ).strftime("%Y-%m-%dT%H:%M:%SZ"),
-            description="The latest record date to sync (inclusive '<='). ISO format.",
+            th.StringType,
+            default=str(
+                int(
+                    datetime.combine(date.today(), datetime.min.time())
+                    .replace(tzinfo=timezone.utc)
+                    .timestamp()
+                    * 1000
+                )
+                - 1
+            ),
+            description="The latest record date to sync as epoch milliseconds"
+            " (inclusive '<=').",
         ),
     ).to_dict()
 

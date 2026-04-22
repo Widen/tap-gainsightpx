@@ -1,7 +1,8 @@
 """Stream type classes for tap-gainsightpx."""
+
 from __future__ import annotations
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
 from singer_sdk import typing as th
 
@@ -40,7 +41,7 @@ class AccountsStream(GainsightPXStream):
     ).to_dict()
 
     def get_url_params(
-        self, context: Optional[dict], next_page_token: Optional[Any]
+        self, context: Optional[Mapping[str, Any]], next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Return a dictionary of values to be used in URL parameterization."""
         params: dict = {"pageSize": 100}
@@ -480,6 +481,12 @@ class SurveyResponsesStream(GainsightPXStream):
         self, params: dict, next_page_token: Optional[Any]
     ) -> Dict[str, Any]:
         """Add more params specific to the stream."""
+        params["filter"] = ";".join(
+            [
+                f"date>={self.config['start_date']}",
+                f"date<={self.config['end_date']}",
+            ]
+        )
         if next_page_token:
             params["scrollId"] = next_page_token
         return params

@@ -24,6 +24,8 @@ plugins:
       kind: integer
     - name: start_date
       kind: string
+    - name: end_date
+      kind: string
     config:
       api_url: https://api.aptrinsic.com/v1
     select:
