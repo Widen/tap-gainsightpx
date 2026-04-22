@@ -42,7 +42,9 @@ def test_standard_tap_tests(requests_mock):
         json=json_resp(),
     )
     requests_mock.get(
-        "https://api.example.com/v1/survey/responses?pageSize=500&sort=date",
+        "https://api.example.com/v1/survey/responses?pageSize=500&sort=date&filter="
+        "date%3E%3D1640995200000%3B"
+        "date%3C%3D1640995200000",
         json=json_resp(),
     )
     requests_mock.get(
